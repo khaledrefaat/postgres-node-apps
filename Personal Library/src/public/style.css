@@ -1,0 +1,26 @@
+h1 {
+  color: crimson;
+  text-align: center;
+}
+
+.books {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.books li {
+  padding: 8px;
+  margin-bottom: 7px;
+  background-color: #dddddd;
+  color: #000000;
+}
+
+.delete-icon {
+  cursor: pointer;
+  transition: color 0.3s ease-in-out;
+}
+
+.delete-icon:hover {
+  color: crimson;
+}
