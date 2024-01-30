@@ -51,6 +51,7 @@ export async function getBooks(req: Request, res: Response) {
 
 export async function postBook(req: Request, res: Response) {
   const { title, genre, author, publishDate, rating, notes } = req.body;
+
   try {
     await pool.query(
       'INSERT INTO books (title, genre, author, publication_date, rating, notes) VALUES ($1, $2, $3, $4, $5, $6)',
@@ -69,6 +70,8 @@ export async function postBook(req: Request, res: Response) {
 export async function updateBook(req: Request, res: Response) {
   const { id } = req.params;
   const { title, genre, author, publishDate, rating, notes } = req.body;
+
+  console.log(req.body);
 
   try {
     await pool.query(
@@ -91,6 +94,75 @@ export async function deleteBook(req: Request, res: Response) {
     await writeFile();
 
     res.json({ message: 'Book deleted successfully' });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
+
+export async function getGenres(req: Request, res: Response) {
+  console.log('getGenres');
+  try {
+    const { rows } = await pool.query(
+      'SELECT genre, COUNT(genre) FROM books GROUP BY genre'
+    );
+    res.json(rows);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
+
+export async function getGenre(req: Request, res: Response) {
+  const { genre } = req.params;
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM books WHERE genre ILIKE $1',
+      [genre.replace('-', ' ')]
+    );
+    res.json({ books: rows, genre: genre.replace('-', ' ') });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
+
+export async function getBook(req: Request, res: Response) {
+  const { id } = req.params;
+
+  try {
+    const { rows } = await pool.query('SELECT * FROM books WHERE id = $1', [
+      id,
+    ]);
+    res.json(rows[0]);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
+
+export async function getAuthor(req: Request, res: Response) {
+  const { name } = req.params;
+
+  try {
+    const { rows } = await pool.query(
+      'SELECT * FROM books WHERE author ILIKE $1',
+      [name.replace('-', ' ')]
+    );
+    res.json(rows);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
+
+export async function getAuthors(req: Request, res: Response) {
+  try {
+    const { rows } = await pool.query(
+      'SELECT author, COUNT(author) FROM books GROUP BY author'
+    );
+    res.json(rows);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });

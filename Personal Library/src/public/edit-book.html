@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous"></script>
-    <title>New Book</title>
+    <title>Edit Book</title>
 </head>
 
 <body>
@@ -32,6 +32,9 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/genres">Genres</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/authors">Authors</a>
+                    </li>
                 </ul>
                 <form class="d-flex" role="search">
                     <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -40,6 +43,7 @@
             </div>
         </div>
     </nav>
+    <h2 class="text-center"></h2>
     <form class="mt-5 form" style="width: 600px; height: 1000px; margin: 0 auto;">
         <div class="form-group">
             <label for="title">Title</label>
@@ -67,33 +71,53 @@
         </div>
         <button type="submit" class="btn btn-primary mt-3 w-100">Submit</button>
     </form>
-
-    <h2 style="color: crimson"></h2>
-
     <script>
         const form = document.querySelector('.form');
+        const title = document.querySelector('h2');
+
+        const title_input = document.getElementById('title');
+        const author_input = document.getElementById('author');
+        const genre_input = document.getElementById('genre');
+        const publish_date_input = document.getElementById('publish-date');
+        const rating_input = document.getElementById('rating');
+        const notes_input = document.getElementById('notes');
+
+        const bookId = window.location.pathname.split('/')[2];
+
+        async function fetchBook() {
+            const res = await fetch('/book/details/' + bookId);
+            const book = await res.json();
+            renderBook(book);
+        }
+
+        function renderBook(book) {
+            title.textContent = book.title;
+
+            title_input.value = book.title;
+            author_input.value = book.author;
+            genre_input.value = book.genre;
+            rating_input.value = book.rating;
+            notes_input.value = book.notes;
+        }
+        fetchBook();
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const title = document.querySelector('#title').value;
-            const author = document.querySelector('#author').value;
-            const genre = document.querySelector('#genre').value;
-            const publishDate = document.querySelector('#publish-date').value;
-            const rating = document.querySelector('#rating').value;
-            const notes = document.querySelector('#notes').value;
 
             const book = {
-                title,
-                author,
-                genre,
-                publishDate,
-                rating,
-                notes
+                title: title_input.value,
+                author: author_input.value,
+                genre: genre_input.value,
+                publishDate: publish_date_input.value,
+                rating: rating_input.value,
+                notes: notes_input.value
             };
 
-            let result = await fetch('/new-book', {
-                method: 'POST',
+            console.log(book)
+
+            let result = await fetch('/edit-book/' + bookId, {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },

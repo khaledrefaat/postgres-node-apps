@@ -35,14 +35,23 @@ function updateBooks() {
   window.app.books.forEach(book => {
     const tableRow = document.createElement('tr');
     tableRow.innerHTML = `
-          <td>${book.title}</td>
-          <td>${book.author}</td>
-          <td>${book.genre}</td>
+          <td><a class="text-dark" href="/book/${book.id}">${
+      book.title
+    }</a></td>
+          <td><a class="text-dark" href="/author/${book.author
+            .toLowerCase()
+            .replace(' ', '-')}">${book.author}</a></td>
+          <td><a class="text-dark" href="/genre/${book.genre
+            .toLowerCase()
+            .replace(' ', '-')}">${book.genre}</a></td>
           <td>${book.rating}</td>
           <td>${new Date(book.publication_date).toLocaleDateString()}</td>
-          <td onclick={deleteBook(${
+          <td>
+          <a href="/edit-book/${book.id}" class="btn btn-primary">Edit</a>
+          <button class="btn btn-danger" onclick={deleteBook(${
             book.id
-          })}><i class="fa-solid fa-trash delete-icon"></i></td>
+          })}>Delete</button>
+          </td>
       `;
     tableBody.appendChild(tableRow);
   });
@@ -50,9 +59,9 @@ function updateBooks() {
 
 function updatePagination() {
   pageList.innerHTML = '';
-  for (let i = 1; i < window.app.books[0].total_count; i += 10) {
+  for (let i = 0; i < window.app.books[0].total_count; i += 10) {
     pageList.innerHTML += `
-      <li class="page-item"><a class="page-link text-secondary" href="#">${Math.floor(
+      <li class="page-item"><a class="page-link text-secondary" href="#">${Math.ceil(
         i / 10 + 1
       )}</a></li>
     `;
